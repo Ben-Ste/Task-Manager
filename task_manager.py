@@ -11,6 +11,7 @@ from datetime import datetime, date
 
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
+
 def reg_user(x, y, z):
     # - Check if the new password and confirmed password are the same.
     if y == z:
@@ -28,8 +29,9 @@ def reg_user(x, y, z):
     else:
         print("Passwords do no match")
 
+
 def add_task(w, x, y, z):
-    # Counts total tasks to find what number should be added to new task
+    # Finds the number for new task, based on existed number
     task_count = 0
     for t in task_list:
         task_count += 1
@@ -64,8 +66,9 @@ def add_task(w, x, y, z):
         task_file.write("\n".join(task_list_to_write))
     print("Task successfully added.")
 
+
 def view_all(x):
-    # Loops through each item in the task list and prints it in an easy to read way
+    # Loops through task list, prints it in an easy to read way
     for t in x:
         disp_str = f"Task: \t\t {t['title']}\n"
         disp_str += f"Assigned to: \t {t['username']}\n"
@@ -74,12 +77,13 @@ def view_all(x):
         disp_str += f"Task Description: \n {t['description']}\n"
         print(disp_str)
 
+
 def view_mine(x):
     # Recounts tasks to account for any changes
     task_count = 0
     for t in task_list:
         task_count += 1
-    # Iterates through task list and checks the value of username, if it matches the current user, display the task
+    # Iterates through task list and checks username, if same as current user, display task
     for t in task_list:
         if t['username'] == x:
             disp_str = f"Task: \t\t {t['title']}\n"
@@ -89,19 +93,16 @@ def view_mine(x):
             disp_str += f"Due Date: \t {t['due_date'].strftime(DATETIME_STRING_FORMAT)}\n"
             disp_str += f"Task Description: \n {t['description']}\n"
             print(disp_str)
-    # Asks the user if they want to run view_specific, and checks to ensure the input is valid
+    # Asks if view_specific is needed, and checks to ensure the input is valid
     while True:
         try:
             vm_menu = input("Enter the task number you wish to view or -1 to return to menu: ")
             if int(vm_menu) not in range(-1, (task_count+1)):
-                print("one")
                 raise ValueError
             elif int(vm_menu) == 0:
-                print("two")
                 raise ValueError
             # Stops users accessing tasks not assigned to them unless they are the admin
             elif int(vm_menu) != -1 and task_list[int(vm_menu)-1].get('username') != curr_user and curr_user != 'admin':
-                print("three")
                 raise ValueError
             break
         except (TypeError, ValueError):
@@ -111,8 +112,9 @@ def view_mine(x):
     else:
         view_specific(vm_menu)
 
+
 def view_specific(x):
-    # Iterates through task list, if the task is of the number requested, print it and ask follow up question
+    # Iterates through task list, if task is correct number, return it, prompt input
     for t in task_list:
         if t['number'] == x:
             disp_str = f"Task: \t\t {t['title']}\n"
@@ -129,7 +131,7 @@ def view_specific(x):
         c - Mark as completed
         m - Return to Menu                
         ''')
-        # Asks the user to confirm the completion, and updates the value of 'completed' to be true if confirmed and overwrites the task in the file
+        # Asks user to confirm completion, updates value of 'completed' to true
         if vs_menu == "c":
             complete_confirm = input(f"Are you sure you want to mark task {title} as complete? (Y/N): ").lower()
             if complete_confirm == "n":
@@ -168,7 +170,7 @@ def view_specific(x):
                 ''').lower()
                 if edit_what == "u":
                     while True:
-                        # Checks if the user you want to assign the task to exists and updates the username to match if it does
+                        # Checks if user assigned to task exists and updates username to match if true
                         new_assign = input("Who would you like to assign this task to? ")
                         if new_assign not in username_password.keys():
                             print("This user does not exist")
@@ -191,28 +193,28 @@ def view_specific(x):
                         break
                     # Asks the user to input a new date, if valid, updates due date to match
                 elif edit_what == "d":
-                            while True:
-                                try:
-                                    new_task_due_date = input("New due date of task (YYYY-MM-DD): ")
-                                    new_date_time = datetime.strptime(new_task_due_date, DATETIME_STRING_FORMAT)
-                                    task_list[int(x)-1].update({'due_date': new_date_time})
-                                    with open("tasks.txt", "w") as task_file:
-                                        task_list_to_write = []
-                                        for t in task_list:
-                                            str_attrs = [
-                                                t['username'],
-                                                t['title'],
-                                                t['description'],
-                                                t['due_date'].strftime(DATETIME_STRING_FORMAT),
-                                                t['assigned_date'].strftime(DATETIME_STRING_FORMAT),
-                                                "Yes" if t['completed'] else "No",
-                                                t['number']
-                                            ]
-                                            task_list_to_write.append(";".join(str_attrs))
-                                        task_file.write("\n".join(task_list_to_write))  
-                                    break
-                                except ValueError:
-                                    print("Invalid datetime format. Please use the format specified")
+                    while True:
+                        try:
+                            new_task_due_date = input("New due date of task (YYYY-MM-DD): ")
+                            new_date_time = datetime.strptime(new_task_due_date, DATETIME_STRING_FORMAT)
+                            task_list[int(x)-1].update({'due_date': new_date_time})
+                            with open("tasks.txt", "w") as task_file:
+                                task_list_to_write = []
+                                for t in task_list:
+                                    str_attrs = [
+                                        t['username'],
+                                        t['title'],
+                                        t['description'],
+                                        t['due_date'].strftime(DATETIME_STRING_FORMAT),
+                                        t['assigned_date'].strftime(DATETIME_STRING_FORMAT),
+                                        "Yes" if t['completed'] else "No",
+                                        t['number']
+                                    ]
+                                    task_list_to_write.append(";".join(str_attrs))
+                                task_file.write("\n".join(task_list_to_write))  
+                            break
+                        except ValueError:
+                            print("Invalid datetime format. Please use the format specified")
                 
                 elif edit_what == "m":
                     break
@@ -389,18 +391,22 @@ while True:
         late_tasks = 0
         to_be_written = []
         curr_date = date.today()
-        # Iterates through task list checks for completed True or False and due date, adds to respective variables if valid
+        # Iterate through task list
         for n, t in enumerate(task_list):
+            # Get state of compeleted and due date
             x = task_list[n].get('completed')
             y = task_list[n].get('due_date')
             if x == True:
+                # Adds to complete count if complete is true
                 complete_tasks += 1
             elif x == False and y.date() < curr_date:
+                # Adds to late count if not complete and due date passed
                 late_tasks += 1
             elif x == False:
+                # Adds to incomplete count if complete false but due date not passed
                 incomplete_tasks += 1
         
-        # Tries to get a percentage of tasks, if there are zero tasks, sets percentage to 0 to save an error
+        # Tries to get a percentage of tasks, if zero tasks, sets percentage to 0
         try:
             incomplete_percent = (incomplete_tasks / task_count) * 100
         except ZeroDivisionError:
@@ -417,7 +423,7 @@ while True:
         to_be_written.append(f"Percentage of tasks incomplete: {incomplete_percent}%")
         to_be_written.append(f"Percentage of tasks late: {late_percent}%")
         
-        # Checks if the required file exists, if it does, writes data, if it doesnt, creates it and writes data
+        # Checks if file exists, writes data if true, creates and writes data if not
         while True:
             try:
                 with open('task_overview.txt', 'w') as f:
@@ -428,7 +434,7 @@ while True:
                 create = open('task_overview.txt', 'a')
                 create.close()
         
-        # Defines variables for user overview and counts total users and appends the already known data
+        # Defines variables for overview
         to_be_written_user = []
         user_count = 0
         user_task_total = 0
@@ -436,6 +442,7 @@ while True:
         user_incomplete_tasks = 0
         user_late_tasks = 0
 
+        # Counts total users and appends the already known data
         for i in user_data:
             user_count += 1
 
@@ -445,7 +452,7 @@ while True:
         # Iterates through username password and gets each key (username)
         for i in username_password:
             user = i
-            # Uses the username taken prior to find tasks assigned to the user and checks completion and due date, counts the relative complete, incomplete and late tasks
+            # Counts completed, incomplete and late tasks for each user
             for n, i in enumerate(task_list):
                 if i['username'] == user:
                     user_task_total += 1
@@ -457,7 +464,7 @@ while True:
                         user_late_tasks += 1
                     elif y == False:
                         user_incomplete_tasks += 1
-            # Tries to calculate percentages, if zero division error, just sets percentage to 0
+            # Tries to calculate percentages, if zero division error, sets percentage to 0
             try:
                 user_task_total_percentage = (user_task_total / task_count) * 100
             except ZeroDivisionError:
@@ -475,7 +482,7 @@ while True:
             except ZeroDivisionError:
                 user_task_late_percentage = 0
 
-            # Makes a preformated string for each users data and appends it to the list for ease in handling the data
+            # Appends a formatted string with data for each user to a list
             to_be_appended = (f'''User: {user} \n
                 Total tasks for user: {user_task_total} \n
                 Percentage of overall total tasks: {user_task_total_percentage}% \n
@@ -488,7 +495,7 @@ while True:
             user_incomplete_tasks = 0
             user_late_tasks = 0
         
-        # Checks if the required file exists, if it does, writes data, if it doesnt, creates it and writes data
+        # Checks if file exists, writes data if true, creates and writes data if not
         while True:
             try:
                 with open('user_overview.txt', 'w') as f:
