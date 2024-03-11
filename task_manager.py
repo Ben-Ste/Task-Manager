@@ -12,12 +12,12 @@ from datetime import datetime, date
 DATETIME_STRING_FORMAT = "%Y-%m-%d"
 
 
-def reg_user(x, y, z):
+def reg_user(new_username, new_password, confirm_password):
     # - Check if the new password and confirmed password are the same.
-    if y == z:
+    if new_password == confirm_password:
         # - If they are the same, add them to the user.txt file,
         print("New user added")
-        username_password[x] = y
+        username_password[new_username] = new_password
             
         with open("user.txt", "w") as out_file:
             user_data = []
@@ -30,7 +30,7 @@ def reg_user(x, y, z):
         print("Passwords do no match")
 
 
-def add_task(w, x, y, z):
+def add_task(username, task_title, task_desc, date_due):
     # Finds the number for new task, based on existed number
     task_count = 0
     for t in task_list:
@@ -40,10 +40,10 @@ def add_task(w, x, y, z):
     ''' Add the data to the file task.txt and
         Include 'No' to indicate if the task is complete.'''
     new_task = {
-        "username": w,
-        "title": x,
-        "description": y,
-        "due_date": z,
+        "username": username,
+        "title": task_title,
+        "description": task_desc,
+        "due_date": date_due,
         "assigned_date": curr_date,
         "completed": False,
         "number": str(task_count+1)
@@ -67,9 +67,9 @@ def add_task(w, x, y, z):
     print("Task successfully added.")
 
 
-def view_all(x):
+def view_all():
     # Loops through task list, prints it in an easy to read way
-    for t in x:
+    for t in task_list:
         disp_str = f"Task: \t\t {t['title']}\n"
         disp_str += f"Assigned to: \t {t['username']}\n"
         disp_str += f"Date Assigned: \t {t['assigned_date'].strftime(DATETIME_STRING_FORMAT)}\n"
@@ -78,14 +78,14 @@ def view_all(x):
         print(disp_str)
 
 
-def view_mine(x):
+def view_mine(current_user):
     # Recounts tasks to account for any changes
     task_count = 0
     for t in task_list:
         task_count += 1
     # Iterates through task list and checks username, if same as current user, display task
     for t in task_list:
-        if t['username'] == x:
+        if t['username'] == current_user:
             disp_str = f"Task: \t\t {t['title']}\n"
             disp_str += f"Task Number: \t {t['number']}\n"
             disp_str += f"Assigned to: \t {t['username']}\n"
@@ -113,10 +113,10 @@ def view_mine(x):
         view_specific(vm_menu)
 
 
-def view_specific(x):
+def view_specific(task_number):
     # Iterates through task list, if task is correct number, return it, prompt input
     for t in task_list:
-        if t['number'] == x:
+        if t['number'] == task_number:
             disp_str = f"Task: \t\t {t['title']}\n"
             disp_str += f"Task Number: \t {t['number']}\n"
             disp_str += f"Assigned to: \t {t['username']}\n"
@@ -369,7 +369,7 @@ while True:
            format of Output 2 presented in the task pdf (i.e. includes spacing
            and labelling) 
         '''
-        view_all(task_list)         
+        view_all()         
 
     elif menu == 'vm':
         '''Reads the task from task.txt file and prints to the console in the 
